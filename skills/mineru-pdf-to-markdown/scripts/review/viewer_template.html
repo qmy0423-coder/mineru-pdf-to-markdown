@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>MinerU · 文档对照编辑</title>
+  <style>{{KATEX_CSS}}</style>
+  <style>{{VIEWER_CSS}}</style>
+</head>
+<body>
+  <main id="app" class="app">
+    <section id="source-panel" class="panel source-panel" aria-label="原文件">
+      <header class="toolbar source-toolbar">
+        <span class="panel-title">原文件</span>
+        <nav class="page-tools" aria-label="原文件翻页及缩放">
+          <button id="previous-page" class="icon-button" title="上一页" aria-label="上一页">◀</button>
+          <label class="page-control"><input id="page-number" type="number" min="1" value="1" aria-label="当前页码"><span>/</span><span id="page-count">—</span></label>
+          <button id="next-page" class="icon-button" title="下一页" aria-label="下一页">▶</button>
+          <button id="zoom-out" class="icon-button zoom-button" title="缩小" aria-label="缩小">−</button>
+          <span id="zoom-label" aria-live="off">100%</span>
+          <button id="zoom-in" class="icon-button zoom-button" title="放大" aria-label="放大">+</button>
+        </nav>
+        <div class="source-actions"><button id="fit-width" class="icon-button" title="适应宽度" aria-label="适应宽度">↔</button><button id="toggle-boxes" class="icon-button active" title="显示或隐藏识别框" aria-label="显示识别框" aria-pressed="true">▣</button></div>
+      </header>
+      <div id="source-scroll" class="source-scroll" tabindex="0" aria-label="原文件页面">
+        <div id="source-pages" class="source-pages"></div>
+      </div>
+    </section>
+    <div id="splitter" class="splitter" role="separator" tabindex="0" aria-label="调整左右栏宽度" aria-orientation="vertical" aria-valuemin="25" aria-valuemax="75" aria-valuenow="50"></div>
+    <section id="markdown-panel" class="panel markdown-panel" aria-label="Markdown 编辑结果">
+      <header class="toolbar markdown-toolbar">
+        <span class="markdown-tab">Markdown</span>
+        <span id="save-status" class="save-status" role="status" aria-live="polite">准备就绪</span>
+        <div class="output-actions"><button id="copy-markdown" class="text-button" title="复制全部 Markdown">复制</button><button id="save-markdown" class="text-button primary" title="下载 Markdown 与图片 ZIP 文件（Ctrl + S）">保存 Markdown</button></div>
+      </header>
+      <div id="markdown-scroll" class="markdown-scroll" tabindex="0" aria-label="识别正文，双击文本可编辑"><article id="markdown-content" class="markdown-content"></article></div>
+      <footer class="editor-hint">双击正文编辑 · Ctrl + Enter 应用 · Esc 取消<span id="document-summary"></span></footer>
+    </section>
+  </main>
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+  <script id="document-data" type="application/json">{{DOCUMENT_DATA}}</script>
+  <script>{{MARKDOWN_IT_JS}}</script>
+  <script>{{KATEX_JS}}</script>
+  <script id="viewer-code">{{VIEWER_JS}}</script>
+</body>
+</html>

@@ -1,0 +1,11 @@
+* text=auto eol=lf
+*.py text eol=lf
+*.md text eol=lf
+*.js text eol=lf
+*.css text eol=lf
+*.html text eol=lf
+*.json text eol=lf
+*.yaml text eol=lf
+*.woff2 binary
+skills/mineru-pdf-to-markdown/scripts/review/vendor/** -text
+skills/mineru-pdf-to-markdown/scripts/review/vendor/**/vendor-manifest.json text eol=lf

@@ -1,0 +1,16 @@
+__pycache__/
+*.py[cod]
+.cache/
+.venv/
+.env
+.env.*
+*.log
+*.pdf
+*.png
+*.jpg
+*.jpeg
+*.zip
+work/
+outputs/
+models/
+continuation_profiles/

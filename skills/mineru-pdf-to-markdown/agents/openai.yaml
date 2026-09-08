@@ -1,0 +1,4 @@
+interface:
+  display_name: "MinerU PDF 转 Markdown"
+  short_description: "按硬件选择解析方式，生成离线校对页并由 Codex 检查段落衔接"
+  default_prompt: "使用 $mineru-pdf-to-markdown 解析这个 PDF，生成校对.html 和修复建议.md。"
