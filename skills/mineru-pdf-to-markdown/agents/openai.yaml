@@ -1,4 +1,4 @@
 interface:
-  display_name: "MinerU PDF ×ª Markdown"
-  short_description: "°´Ó²¼şÑ¡Ôñ½âÎö·½Ê½£¬Éú³ÉÀëÏßĞ£¶ÔÒ³²¢ÓÉ Codex ¼ì²é¶ÎÂäÏÎ½Ó"
-  default_prompt: "Ê¹ÓÃ $mineru-pdf-to-markdown ½âÎöÕâ¸ö PDF£¬Éú³ÉĞ£¶Ô.html ºÍĞŞ¸´½¨Òé.md¡£"
+  display_name: "MinerU PDF è½¬ Markdown"
+  short_description: "æŒ‰ç¡¬ä»¶é€‰æ‹©è§£ææ–¹å¼ï¼Œç”Ÿæˆç¦»çº¿æ ¡å¯¹é¡µå¹¶ç”± Codex æ£€æŸ¥æ®µè½è¡”æ¥"
+  default_prompt: "ä½¿ç”¨ $mineru-pdf-to-markdown è§£æè¿™ä¸ª PDFï¼Œç”Ÿæˆæ ¡å¯¹.html å’Œä¿®å¤å»ºè®®.mdã€‚"
