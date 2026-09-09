@@ -8,18 +8,10 @@
 
 ## 在 Codex 中安装
 
-把下面这句话发送到 Codex 对话框。`$skill-installer` 用于调用安装 Skill，后面的内容是自然语言，可以用中文或英文；整行不在终端执行。
-
-纯英文写法：
+把下面这句话发送到 Codex 对话框。`$skill-installer` 用于调用安装 Skill；整行不在终端执行。
 
 ```text
 $skill-installer Install https://github.com/qmy0423-coder/mineru-pdf-to-markdown/tree/main/skills/mineru-pdf-to-markdown
-```
-
-中文写法：
-
-```text
-$skill-installer 从 https://github.com/qmy0423-coder/mineru-pdf-to-markdown/tree/main/skills/mineru-pdf-to-markdown 安装这个 Skill
 ```
 
 也可调用已安装的 Skill Installer 脚本（脚本目录随 Codex 安装位置变化）：
@@ -29,8 +21,6 @@ python <skill-installer-dir>/scripts/install-skill-from-github.py --repo qmy0423
 ```
 
 安装后可在下一轮任务调用。若名称未出现，重新加载/重启 Codex。安装 Skill 仅下载工作流和脚本，首次实际解析时才检查并准备 MinerU 环境。
-
-本仓库为公有仓库，下载安装不需要 GitHub 登录或访问令牌。
 
 ## 使用
 
