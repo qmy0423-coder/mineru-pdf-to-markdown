@@ -189,7 +189,8 @@ def safe_json(value: object) -> str:
 
 
 def build(input_dir: Path, output: Path, scale: float, replace: bool,
-          cache_dir: Path | None = None, profile_dir: Path | None = None) -> dict:
+          cache_dir: Path | None = None, profile_dir: Path | None = None,
+          auto_continuations: bool = False) -> dict:
     from extract_blocks import load_document_structure
     from reviewed_continuations import apply_reviewed_continuations
 
@@ -207,10 +208,13 @@ def build(input_dir: Path, output: Path, scale: float, replace: bool,
         raise FileExistsError(f"Output already exists. Use --force to rebuild: {output}")
     before = source_snapshot(input_dir)
     structure = load_document_structure(input_dir)
-    if profile_dir is not None:
-        structure = apply_reviewed_continuations(structure, profile_dir.resolve())
+    structure = apply_reviewed_continuations(
+        structure, profile_dir.resolve() if profile_dir is not None else None,
+        auto_continuations=auto_continuations,
+    )
     data = {**structure["metadata"], "blocks": structure["blocks"], "pages": structure["pages"],
             "continuations": structure.get("continuations", []),
+            "continuationCandidates": structure.get("continuationCandidates", []),
             "paragraphMerges": structure.get("paragraphMerges", []),
             "sourceBlockOrder": structure.get("sourceBlockOrder", [])}
     if cache_dir is None:
@@ -244,6 +248,7 @@ def main() -> None:
     parser.add_argument("--force", action="store_true", help="Replace an existing generated review HTML")
     parser.add_argument("--cache-dir", type=Path, help="Optional reusable page cache outside the input directory; default is a temporary cache")
     parser.add_argument("--profile-dir", type=Path, help="Explicitly apply reviewed paragraph profiles from this external directory")
+    parser.add_argument("--auto-continuations", action="store_true", help="Apply generic heuristic joins when no matching external profile exists; default only records candidates")
     parser.add_argument("--download-vendor", action="store_true", help="Fetch pinned browser libraries once")
     args = parser.parse_args()
     if not 1 <= args.scale <= 4:
@@ -251,7 +256,8 @@ def main() -> None:
     if args.download_vendor:
         download_vendor()
     output = args.output or (args.input.parent / "校对.html")
-    build(args.input, output, args.scale, args.force, args.cache_dir, args.profile_dir)
+    build(args.input, output, args.scale, args.force, args.cache_dir, args.profile_dir,
+          args.auto_continuations)
 
 
 if __name__ == "__main__":

@@ -30,6 +30,8 @@ $mineru-pdf-to-markdown 将这个 PDF 转成 Markdown，优先使用 GPU，并�
 
 已有解析结果也可以直接生成校对页并复核。校对页包含原始 PDF 页图、识别框联动、Markdown 编辑、公式与表格显示，以及带图片的 Markdown ZIP 导出。修复建议由 Codex 在任务中完成，不需要单独的 LLM API key；默认保留原文，仅提出建议。
 
+已同步新版通用段落续接检测：默认在校对页数据和复核材料中记录候选，包含断点原文、行号、页码及浮动图表位置。需要规则自动合并时，可给 `build_review.py` 加 `--auto-continuations`；显式 `--profile-dir` 中匹配源哈希的人工复核清单优先。合并保留原始片段和映射，原始解析文件不变。规则候选仍需 Codex 核对，详细模式见 [校对页说明](skills/mineru-pdf-to-markdown/references/review-page.md)。
+
 每份 PDF 的结果包括：原始 Markdown、`images/`、中间 JSON/原文副本、`校对.html`、`修复建议.md`。
 
 ## 兼容性
@@ -47,5 +49,8 @@ $mineru-pdf-to-markdown 将这个 PDF 转成 Markdown，优先使用 GPU，并�
 - 额外用一份 41 页既有 VLM 输出回归校验：632 个编辑块、18 张图片，原文和图片保留。
 - Edge 离线验证：页面打开、首尾页导航、编辑应用/取消、Markdown ZIP 下载通过；导出图片字节一致，未产生外部请求。
 - Codex 完整检查自建样本，定位 1 处跨页断句并生成修复建议，原始 Markdown 未修改。
+- 2026-09-11 更新验证：11 项续接测试通过；复用 VLM、hybrid、pipeline 小样及 41 页既有解析结果验证默认候选、可选自动合并和原文逆向还原。浏览器编辑、ZIP 内容与图片、旧草稿合并恢复及不同段落策略的草稿备份通过；本次没有重新运行 OCR。
 
 可用 `tests/validate_run.py --input <解析子目录> --html <校对.html> --packets <复核材料目录>` 复查无损重组、素材引用、分块覆盖和源文件保护。该验证器不替代 Codex 的语义复核。
+
+续接规则与模式测试可运行 `python -m unittest discover -s tests -p test_continuations.py`，无需安装 MinerU 或准备业务文档。

@@ -51,6 +51,23 @@ def validate(input_dir: Path, html_path: Path, packet_dir: Path) -> dict:
         assert source[record["char_start"]:record["char_end_exclusive"]] == record["markdown"]
         assert record["line_start"] == 1 + source[:record["char_start"]].count("\n")
         assert all(1 <= p <= data["pageCount"] for p in record["pdf_pages_1based"])
+    candidates = json.loads((packet_dir / manifest["continuation_candidates"]).read_text(encoding="utf-8"))
+    assert candidates["source_sha256"] == data["sourceMarkdownHash"]
+    assert candidates["review_status"] == "pending_codex_review"
+    assert len(candidates["candidates"]) == manifest["continuation_candidate_count"]
+    expected_edges = [{key: value for key, value in edge.items()
+                       if key not in {"left_location", "right_location"}}
+                      for edge in candidates["candidates"]]
+    assert expected_edges == data["continuationCandidates"], "HTML and review packets disagree on candidates"
+    records_by_id = {record["id"]: record for record in block_records}
+    for edge in candidates["candidates"]:
+        for side in ("left", "right"):
+            record = records_by_id[edge[side]]
+            assert edge[f"{side}_location"] == {
+                key: record[key] for key in ("line_start", "line_end", "pdf_pages_1based")
+            }
+        assert records_by_id[edge["left"]]["markdown"].endswith(edge["leftTail"])
+        assert records_by_id[edge["right"]]["markdown"].startswith(edge["rightHead"])
     try:
         build(input_dir, input_dir / "must-not-write.html", 1, False)
         raise AssertionError("Output inside source directory was accepted")
@@ -73,6 +90,7 @@ def validate(input_dir: Path, html_path: Path, packet_dir: Path) -> dict:
             pass
     result = {"pages": data["pageCount"], "blocks": len(data["blocks"]),
               "images": len(data["assets"]), "chunks": len(manifest["chunks"]),
+              "continuation_candidates": len(candidates["candidates"]),
               "roundtrip": "exact", "source_protection": "passed", "packet_coverage": "complete"}
     print(json.dumps(result, ensure_ascii=False, indent=2))
     return result

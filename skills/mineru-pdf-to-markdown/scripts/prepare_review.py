@@ -12,6 +12,7 @@ import sys
 
 sys.path.insert(0, str(Path(__file__).resolve().parent / "review"))
 from extract_blocks import load_document_structure
+from reviewed_continuations import find_continuation_candidates
 
 
 def prepare(input_dir: Path, output_dir: Path, chunk_chars: int = 14000) -> dict:
@@ -41,8 +42,23 @@ def prepare(input_dir: Path, output_dir: Path, chunk_chars: int = 14000) -> dict
         line_number += piece.count("\n")
     if offset != len(source):
         raise ValueError("Incomplete source coverage; no packets saved")
+    by_id = {record["id"]: record for record in records}
+    candidates = []
+    for edge in find_continuation_candidates(structure):
+        located = dict(edge)
+        for side in ("left", "right"):
+            record = by_id[edge[side]]
+            located[f"{side}_location"] = {
+                key: record[key] for key in ("line_start", "line_end", "pdf_pages_1based")
+            }
+        candidates.append(located)
     output_dir.mkdir(parents=True, exist_ok=True)
     (output_dir / "blocks.jsonl").write_text("".join(json.dumps(r, ensure_ascii=False) + "\n" for r in records), encoding="utf-8")
+    candidate_file = "continuation-candidates.json"
+    (output_dir / candidate_file).write_text(json.dumps({
+        "source_sha256": metadata["sourceMarkdownHash"],
+        "review_status": "pending_codex_review", "candidates": candidates,
+    }, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     lines = source.split("\n")
     chunks, start = [], 0
     while start < len(lines):
@@ -66,6 +82,8 @@ def prepare(input_dir: Path, output_dir: Path, chunk_chars: int = 14000) -> dict
                 "markdown_lines": len(lines), "markdown_characters": len(source),
                 "largest_line_characters": max(map(len, lines), default=0),
                 "block_map": "blocks.jsonl", "chunks": chunks,
+                "continuation_candidates": candidate_file,
+                "continuation_candidate_count": len(candidates),
                 "review_status": "pending_codex_review"}
     (output_dir / "manifest.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(manifest, ensure_ascii=False, indent=2))
